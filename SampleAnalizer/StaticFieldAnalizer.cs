@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 namespace SampleAnalizer
-{
+{ 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class StaticFieldAnalizer : DiagnosticAnalyzer
     {

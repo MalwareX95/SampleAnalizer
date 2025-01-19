@@ -21,7 +21,6 @@ namespace SampleAnalizer.Tests
                 {
                     public static void Select([StaticField] object selector)
                     {
-
                     }
                 }
 
