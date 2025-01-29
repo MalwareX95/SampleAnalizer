@@ -45,8 +45,18 @@ namespace SampleAnalizer
             var root = await document.GetSyntaxRootAsync(cancellationToken);
             var editor = new SyntaxEditor(root, services);
             var type = node.FirstAncestorOrSelf<ClassDeclarationSyntax>();
-
             TypeSyntax intType = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword));
+
+            var model = await document.GetSemanticModelAsync(cancellationToken);
+            var symbol = model.GetDeclaredSymbol(node);
+            var argumentSyntax = node as ArgumentSyntax;
+            
+            if (argumentSyntax == null)
+            {
+                return document;
+            }
+
+            var a = argumentSyntax.Expression;
 
             // Create the generic type 'Func<int>'
             TypeSyntax funcType = SyntaxFactory.QualifiedName(
@@ -55,11 +65,11 @@ namespace SampleAnalizer
                     .WithTypeArgumentList(SyntaxFactory.TypeArgumentList(
                         SyntaxFactory.SingletonSeparatedList(intType))));
             
-            var fieldDeclaration = SyntaxFactory
+            var variableDeclaration = SyntaxFactory
                 .VariableDeclaration(funcType)
                 .WithVariables(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator("_myField")));
 
-            editor.ReplaceNode(type, type.AddMembers(SyntaxFactory.FieldDeclaration(fieldDeclaration)));
+            editor.ReplaceNode(type, type.AddMembers(SyntaxFactory.FieldDeclaration(variableDeclaration)));
 
             return document.WithSyntaxRoot(editor.GetChangedRoot());
         }
